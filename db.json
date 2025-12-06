@@ -1,0 +1,269 @@
+{
+  "tickets": [
+    {
+      "id": "1765032741428",
+      "status": "resolved",
+      "date": "06.12.2025",
+      "type": "fault",
+      "name": "bayramgarip",
+      "userId": "0531",
+      "message": "sular kesildi",
+      "adminResponse": "NodeScript Test Response"
+    },
+    {
+      "id": "1765046911342",
+      "status": "resolved",
+      "date": "06.12.2025",
+      "type": "fault",
+      "name": "bayramgarip",
+      "userId": "0531",
+      "message": "problem var help",
+      "adminResponse": "çözüldü"
+    },
+    {
+      "id": "1765047342671",
+      "status": "resolved",
+      "date": "06.12.2025",
+      "type": "fault",
+      "name": "bayramgarip",
+      "userId": "0531",
+      "message": "sokak lambbası bozuk\n",
+      "adminResponse": "çözüldü"
+    },
+    {
+      "id": "1765049913538",
+      "status": "resolved",
+      "date": "06.12.2025",
+      "type": "fault",
+      "name": "bayramgarip",
+      "userId": "0531",
+      "message": "çözün",
+      "adminResponse": "çözüldü"
+    }
+  ],
+  "market": [
+    {
+      "id": 1765032936245,
+      "title": "ürün",
+      "price": "1",
+      "phone": "532",
+      "desc": "",
+      "owner": "Köy Sakini (Yönetici)",
+      "status": "approved",
+      "image": "images/default_market.jpg"
+    },
+    {
+      "id": 1765049767544,
+      "title": "Test Listing",
+      "price": "100 TL",
+      "phone": "5551234567",
+      "desc": "satlık arsa",
+      "owner": "0531",
+      "status": "approved",
+      "image": "images/default_market.jpg"
+    }
+  ],
+  "announcements": [
+    "Browser Test Persistence"
+  ],
+  "supportTickets": [
+    {
+      "id": "GDK-2025-979",
+      "date": "2025-12-06T07:18:03.573Z",
+      "type": "Test",
+      "message": "Hello"
+    },
+    {
+      "id": "GDK-2025-6",
+      "date": "2025-12-06T13:40:24.478Z",
+      "type": "Teknik",
+      "timestamp": 1765028424473
+    }
+  ],
+  "users": [
+    {
+      "id": 1764956186067,
+      "name": "Test User",
+      "contact": "test@example.com",
+      "password": "password123",
+      "role": "user",
+      "joinedAt": "2025-12-05T17:36:26.067Z"
+    },
+    {
+      "id": 1764956394146,
+      "name": "Browser Test User",
+      "contact": "browser_test_123",
+      "password": "pass123",
+      "role": "user",
+      "joinedAt": "2025-12-05T17:39:54.146Z"
+    },
+    {
+      "id": 1764957086470,
+      "name": "teeest user",
+      "contact": "browser_test_1234",
+      "password": "322132",
+      "role": "user",
+      "joinedAt": "2025-12-05T17:51:26.470Z"
+    },
+    {
+      "id": 1765005483564,
+      "name": "Tester",
+      "contact": "test1765005483544@example.com",
+      "password": "123",
+      "role": "user",
+      "joinedAt": "2025-12-06T07:18:03.564Z"
+    },
+    {
+      "id": 1765020437223,
+      "name": "Browser Test User",
+      "contact": "browser_test",
+      "password": "1234556789",
+      "role": "user",
+      "joinedAt": "2025-12-06T11:27:17.223Z"
+    },
+    {
+      "id": 1765022356629,
+      "name": "Browser Test UserTest User",
+      "contact": "0555",
+      "password": "pass123pass",
+      "role": "user",
+      "joinedAt": "2025-12-06T11:59:16.629Z"
+    },
+    {
+      "id": 1765022730063,
+      "name": "Browser Test User23",
+      "contact": "05555",
+      "password": "12345",
+      "role": "user",
+      "joinedAt": "2025-12-06T12:05:30.063Z"
+    },
+    {
+      "id": 1765022770911,
+      "name": "bayramgarip",
+      "contact": "0531",
+      "password": "1234",
+      "role": "user",
+      "joinedAt": "2025-12-06T12:06:10.911Z"
+    },
+    {
+      "id": 1765047586428,
+      "name": "Browser Test UserTest User 1",
+      "contact": "testuser1",
+      "password": "pass123123",
+      "role": "user",
+      "joinedAt": "2025-12-06T18:59:46.428Z"
+    },
+    {
+      "id": 1765047761601,
+      "name": "Browser Test UserFinal User",
+      "contact": "finaluser",
+      "password": "pass123123",
+      "role": "user",
+      "joinedAt": "2025-12-06T19:02:41.601Z"
+    },
+    {
+      "id": 1765053619614,
+      "name": "Browser Test UserPassTestUser",
+      "contact": "5551234567",
+      "password": "pass123123",
+      "role": "user",
+      "joinedAt": "2025-12-06T20:40:19.614Z"
+    },
+    {
+      "id": 1765053734546,
+      "name": "Browser Test UserPassTestUser2",
+      "contact": "5550000000",
+      "password": "pass123123",
+      "role": "user",
+      "joinedAt": "2025-12-06T20:42:14.546Z"
+    }
+  ],
+  "genealogy": [
+    {
+      "id": 1,
+      "title": "Hacıalar Sülalesi",
+      "detail": "Kökler ve Aile Büyükleri"
+    },
+    {
+      "id": 2,
+      "title": "Mollaoğulları",
+      "detail": "Aile Şeması"
+    },
+    {
+      "id": 1765026616991,
+      "title": "garipler",
+      "detail": "garipler",
+      "date": "garipler",
+      "image": "",
+      "src": "",
+      "name": "garipler"
+    },
+    {
+      "id": 1765026644229,
+      "title": "günallar",
+      "detail": "günallar",
+      "date": "günallar",
+      "image": "",
+      "src": "",
+      "name": "günallar"
+    }
+  ],
+  "gallery": [
+    {
+      "id": 1,
+      "src": "images/IMG20200801170110.jpg"
+    },
+    {
+      "id": 2,
+      "src": "images/IMG20220712202035.jpg"
+    },
+    {
+      "id": 3,
+      "src": "images/IMG20200807185200.jpg"
+    },
+    {
+      "id": 4,
+      "src": "images/image.png"
+    }
+  ],
+  "documents": [
+    {
+      "id": 1,
+      "title": "1937 Köy Yerleşim Planı",
+      "date": "1937"
+    }
+  ],
+  "deceased": [
+    {
+      "id": 1,
+      "name": "Mehmet Yılmaz",
+      "date": "2024"
+    },
+    {
+      "id": 1765026698923,
+      "title": "bayram garip (garip bayramı)",
+      "detail": "",
+      "date": "",
+      "image": "",
+      "src": "",
+      "name": "bayram garip (garip bayramı)"
+    },
+    {
+      "id": 1765032859897,
+      "title": "ayşe garip",
+      "detail": "garip",
+      "date": "",
+      "image": "",
+      "src": "",
+      "name": "ayşe garip"
+    }
+  ],
+  "settings": {
+    "weatherCity": "Isparta/Gedikli",
+    "streamStatus": {
+      "1": false,
+      "2": false,
+      "3": false
+    }
+  }
+}
