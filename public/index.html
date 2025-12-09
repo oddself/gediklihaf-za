@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gedikli Köyü Dijital Belleği</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="images/logo.png" alt="Logo" class="sidebar-logo">
+            <div class="header-text">
+                <h2>Gedikli<br>Belleği</h2>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+            <button class="menu-btn active" onclick="showSection('dashboard')">
+                <i class="fas fa-home"></i> Ana Panel
+            </button>
+            <button class="menu-btn" onclick="showSection('intro')">
+                <i class="fas fa-info-circle"></i> Köy Tanıtımı
+            </button>
+            <button class="menu-btn" onclick="showSection('market')">
+                <i class="fas fa-store"></i> Köy Pazarı <span class="badge">Vitrin</span>
+            </button>
+            <button class="menu-btn" onclick="showSection('support')">
+                <i class="fas fa-headset"></i> İletişim & Destek
+            </button>
+            <button class="menu-btn" onclick="showSection('cameras')">
+                <i class="fas fa-video"></i> Canlı Yayınlar
+            </button>
+            <button class="menu-btn" onclick="showSection('genealogy')">
+                <i class="fas fa-users"></i> Soyağacı & Nüfus
+            </button>
+            <button class="menu-btn" onclick="showSection('archive')">
+                <i class="fas fa-box-open"></i> Belge Arşivi
+            </button>
+            <button class="menu-btn" onclick="showSection('gallery')">
+                <i class="fas fa-images"></i> Fotoğraf Kütüphanesi
+            </button>
+            <button class="menu-btn" onclick="showSection('memorial')">
+                <i class="fas fa-praying-hands"></i> Vefat Edenler
+            </button>
+            <button class="menu-btn" onclick="showSection('guide')">
+                <i class="fas fa-map-marked-alt"></i> Köy Rehberi
+            </button>
+        </nav>
+
+        <div class="sidebar-widgets">
+            <div class="widget-box weather">
+                <div class="widget-icon"><i class="fas fa-cloud-sun"></i></div>
+                <div class="widget-info" id="weather-widget-content">
+                    <h4>Isparta/Gedikli</h4>
+                    <span>Yükleniyor...</span>
+                </div>
+            </div>
+            <div class="widget-box prayer">
+                <div class="widget-icon"><i class="fas fa-mosque"></i></div>
+                <div class="widget-info" id="prayer-widget-content">
+                    <h4>Sıradaki Ezan</h4>
+                    <span>Hesaplanıyor...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <p>© 2025 Gedikli Köyü</p>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="top-bar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Köy kayıtlarında arayın..."
+                    oninput="handleGlobalSearch(this.value)">
+                <div id="search-results" class="search-results-dropdown"></div>
+            </div>
+
+            <div class="user-profile" id="userProfileArea">
+                <a href="login.html" class="default-login-link">
+                    <span>Ziyaretçi Girişi</span>
+                    <i class="fas fa-user-circle"></i>
+                </a>
+            </div>
+        </header>
+
+        <section id="dashboard" class="page-section active">
+            <div class="announcement-banner">
+                <div class="announcement-icon">
+                    <i class="fas fa-bullhorn"></i> DUYURULAR:
+                    <button id="btn-edit-announcements" class="admin-only" onclick="openAnnouncementModal()"
+                        style="display:none; background:none; border:none; color:var(--primary); cursor:pointer; margin-left:5px;"
+                        title="Duyuruları Düzenle">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+                <div class="announcement-text" style="display: flex; align-items: center; justify-content: center;">
+                    <div id="announcement-slider"
+                        style="opacity: 1; transition: opacity 0.5s ease-in-out; text-align: center; width: 100%;">
+                        Yükleniyor...
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-card"
+                style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('images/IMG20210814191820.jpg');">
+                <h1>Gedikli Köyü Dijital Arşivine Hoş Geldiniz</h1>
+                <p>Tarih, Kültür ve İnsan Hazinesi</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-store" style="color: #f39c12; opacity: 1;"></i>
+                    <h3>Pazar</h3>
+                    <p>Aktif İlanlar</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-file-alt"></i>
+                    <h3>150+</h3>
+                    <p>Tarihi Belge</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-camera-retro"></i>
+                    <h3>1200+</h3>
+                    <p>Arşiv Fotoğrafı</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="market" class="page-section">
+            <div class="section-header">
+                <h2><i class="fas fa-store"></i> Sanal Köy Pazarı</h2>
+                <button class="btn-submit idea-btn" onclick="openModal('modal-ad')"><i class="fas fa-plus"></i> İlan
+                    Ver</button>
+            </div>
+            <p style="margin-bottom: 20px; color:#666;">Köyümüzün bereketli topraklarından çıkan ürünler ve satılık
+                ilanları.</p>
+
+            <div class="market-grid">
+                <div class="market-card">
+                    <div class="market-img">
+                        <img src="images/gallery1.jpg" alt="Elma">
+                        <span class="price-tag">25 TL / Kg</span>
+                    </div>
+                    <div class="market-info">
+                        <h4>Gedikli Elması (Doğal)</h4>
+                        <p class="seller"><i class="fas fa-user"></i> Satıcı: Ahmet Amca</p>
+                        <p class="desc">İlaçsız, dalından yeni toplanmış, sulu Isparta elması.</p>
+                        <a href="tel:05555555555" class="btn-call"><i class="fas fa-phone"></i> Satıcıyı Ara</a>
+                    </div>
+                </div>
+                <div class="market-card">
+                    <div class="market-img">
+                        <img src="images/about.jpg" alt="Köy Ürünleri">
+                        <span class="price-tag">300 TL / Kg</span>
+                    </div>
+                    <div class="market-info">
+                        <h4>Köy Tereyağı & Peynir</h4>
+                        <p class="seller"><i class="fas fa-user"></i> Satıcı: Ayşe Teyze</p>
+                        <p class="desc">Yayık tereyağı ve keçi peyniri. Sipariş üzerine hazırlanır.</p>
+                        <a href="tel:05555555555" class="btn-call"><i class="fas fa-phone"></i> Satıcıyı Ara</a>
+                    </div>
+                </div>
+                <div class="market-card">
+                    <div class="market-img">
+                        <img src="images/IMG20201208100004.jpg" alt="Arsa">
+                        <span class="price-tag">Fiyat Sorunuz</span>
+                    </div>
+                    <div class="market-info">
+                        <h4>Satılık Göl Manzaralı Arsa</h4>
+                        <p class="seller"><i class="fas fa-user"></i> Satıcı: Mehmet Yılmaz</p>
+                        <p class="desc">Göl kenarına 500m mesafede, 2 dönüm bahçeli tarla.</p>
+                        <a href="tel:05555555555" class="btn-call"><i class="fas fa-phone"></i> Satıcıyı Ara</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="support" class="page-section">
+            <div class="section-header">
+                <h2><i class="fas fa-headset"></i> İletişim & Destek</h2>
+            </div>
+
+            <div class="support-tabs">
+                <button class="support-tab active" onclick="switchSupportTab('fault')">🛠️ Arıza Bildir</button>
+                <button class="support-tab" onclick="switchSupportTab('idea')">💡 Öneri/İstek</button>
+                <button class="support-tab" onclick="switchSupportTab('results')">📋 Sonuçlar</button>
+                <button class="support-tab admin-only" onclick="switchSupportTab('admin')" style="display:none;">📢 Köy
+                    Kürsüsü</button>
+            </div>
+
+            <!-- ARIZA FORMU -->
+            <div id="content-fault" class="support-content">
+                <div class="support-form-container">
+                    <p>Elektrik, su, yol vb. arızaları buradan bildirebilirsiniz.</p>
+                    <div class="form-group">
+                        <textarea id="text-fault" rows="4" placeholder="Arıza detaylarını yazınız..."></textarea>
+                    </div>
+                    <button class="btn-submit" onclick="submitTicket('fault')">Bildirimi Gönder</button>
+                </div>
+            </div>
+
+            <!-- ÖNERİ FORMU -->
+            <div id="content-idea" class="support-content" style="display:none;">
+                <div class="support-form-container">
+                    <p>Köyümüz için fikir ve önerilerinizi bekliyoruz.</p>
+                    <div class="form-group">
+                        <textarea id="text-idea" rows="4" placeholder="Fikrinizi paylaşın..."></textarea>
+                    </div>
+                    <button class="btn-submit idea-btn" onclick="submitTicket('idea')">Fikrimi İlet</button>
+                </div>
+            </div>
+
+            <!-- SONUÇLAR -->
+            <div id="content-results" class="support-content" style="display:none;">
+                <div id="user-tickets-list">
+                    <p style="text-align:center; color:#999; padding:20px;">Görüntülemek için giriş yapmalısınız.</p>
+                </div>
+            </div>
+
+            <!-- ADMIN PANEL -->
+            <div id="content-admin" class="support-content" style="display:none;">
+                <div id="admin-tickets-list">
+                    <!-- Tickets will load here -->
+                </div>
+            </div>
+        </section>
+
+        <section id="intro" class="page-section">
+            <div class="hero-card"
+                style="height: 200px; background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('images/IMG20200807185200.jpg');">
+                <h1>Torosların İncisi: Gedikli</h1>
+                <p>Coğrafya, İklim ve Yaşam</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>1139m</h3>
+                    <p>Rakım</p>
+                </div>
+                <div class="stat-card">
+                    <h3>29 km</h3>
+                    <p>İlçe Uzaklığı</p>
+                </div>
+                <div class="stat-card">
+                    <h3>550+</h3>
+                    <p>Nüfus</p>
+                </div>
+            </div>
+            <div class="archive-grid">
+                <div class="doc-item" style="text-align: left;">
+                    <h3>Coğrafi Konum</h3>
+                    <p>Gedikli Köyü, Isparta ilinin Şarkikaraağaç ilçesine bağlıdır.</p>
+                </div>
+                <div class="doc-item" style="text-align: left;">
+                    <h3>Ekonomi</h3>
+                    <p>Temel geçim kaynağı tarım, hayvancılık ve balıkçılıktır.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="cameras" class="page-section">
+            <div class="section-header">
+                <h2><i class="fas fa-satellite-dish"></i> Canlı İzleme</h2><span class="solar-info">Güneş Enerjili
+                    Sistem</span>
+            </div>
+            <div class="camera-grid">
+                <div class="cam-feed">
+                    <div class="cam-screen" style="background-image: url('images/IMG20201208100004.jpg');">
+                        <div class="cam-overlay"><span class="cam-label">MEYDAN</span><span
+                                class="cam-status offline">Çevrimdışı</span></div>
+                    </div>
+                </div>
+                <div class="cam-feed">
+                    <div class="cam-screen" style="background-image: url('images/IMG20200801163817.jpg');">
+                        <div class="cam-overlay"><span class="cam-label">İSKELE</span><span
+                                class="cam-status offline">Çevrimdışı</span></div>
+                    </div>
+                </div>
+                <div class="cam-feed">
+                    <div class="cam-screen" style="background-image: url('images/hero.jpg');">
+                        <div class="cam-overlay"><span class="cam-label">SİNDEL</span><span
+                                class="cam-status offline">Çevrimdışı</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="genealogy" class="page-section">
+            <div class="section-header">
+                <h2>Soyağacı</h2>
+                <button class="btn-add-admin" onclick="openAdminModal('genealogy')" style="display:none;"><i
+                        class="fas fa-plus"></i> Ekle</button>
+            </div>
+            <div class="family-tree-list" id="genealogy-container">
+                <!-- Dynamic Content -->
+            </div>
+        </section>
+
+        <section id="archive" class="page-section">
+            <div class="section-header">
+                <h2>Belge Arşivi</h2>
+                <button class="btn-add-admin" onclick="openAdminModal('documents')" style="display:none;"><i
+                        class="fas fa-plus"></i> Ekle</button>
+            </div>
+            <div class="archive-grid" id="documents-container">
+                <!-- Dynamic Content -->
+            </div>
+        </section>
+
+        <section id="gallery" class="page-section">
+            <div class="section-header">
+                <h2>Fotoğraf Kütüphanesi</h2>
+                <button class="btn-add-admin" onclick="openAdminModal('gallery')" style="display:none;"><i
+                        class="fas fa-plus"></i> Ekle</button>
+            </div>
+            <div class="masonry-grid" id="gallery-container">
+                <!-- Dynamic Content -->
+            </div>
+        </section>
+
+        <section id="memorial" class="page-section">
+            <div class="section-header">
+                <h2>Vefat Edenler</h2>
+                <button class="btn-add-admin" onclick="openAdminModal('deceased')" style="display:none;"><i
+                        class="fas fa-plus"></i> Ekle</button>
+            </div>
+            <div class="memorial-list" id="deceased-container">
+                <!-- Dynamic Content -->
+            </div>
+        </section>
+
+        <section id="guide" class="page-section">
+            <h2>Köy Rehberi</h2>
+            <div class="map-full"><iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12640.67272895697!2d31.3965!3d37.8962!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14c4627000000001%3A0x123456789!2sGedikli%2C%20Şarkikaraağaç%2FIsparta!5e0!3m2!1str!2str!4v1600000000000!5m2!1str!2str"
+                    width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe></div>
+        </section>
+
+    </main>
+
+    <!-- USER PROFILE MODAL -->
+    <div id="profileModal" class="modal-overlay" onclick="closeModal('profileModal')">
+        <div class="modal-content profile-card" onclick="event.stopPropagation()">
+            <span class="close-btn" onclick="closeModal('profileModal')">&times;</span>
+            <div class="profile-header">
+                <i class="fas fa-user-circle fa-4x" style="color:var(--primary);"></i>
+                <h3 id="profileName">Kullanıcı Adı</h3>
+                <span class="badge" id="profileRole">Yetki</span>
+            </div>
+            <div class="profile-body">
+                <div class="info-row">
+                    <strong><i class="fas fa-id-badge"></i> Rol:</strong>
+                    <span id="profileRoleDetail">-</span>
+                </div>
+                <div class="info-row">
+                    <strong><i class="fas fa-calendar-alt"></i> Katılım:</strong>
+                    <span id="profileJoinDate">2024</span>
+                </div>
+                <div class="info-row">
+                    <strong><i class="fas fa-envelope"></i> İletişim:</strong>
+                    <span id="profileContact">-</span>
+                </div>
+
+                <hr>
+
+                <div class="profile-actions" style="margin-top:20px; display:flex; gap:10px;">
+                    <button class="action-btn" onclick="openChangePasswordModal()"
+                        style="background:#3498db; flex:1; border:none; color:white; padding:10px; border-radius:4px; cursor:pointer;"><i
+                            class="fas fa-key"></i> Şifre Değiştir</button>
+                    <button class="action-btn danger" onclick="logout()"
+                        style="background:#e74c3c; flex:1; border:none; color:white; padding:10px; border-radius:4px; cursor:pointer;"><i
+                            class="fas fa-sign-out-alt"></i> Güvenli Çıkış</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHANGE PASSWORD MODAL -->
+    <div id="change-password-modal" class="modal-overlay" onclick="closeModal('change-password-modal')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-btn" onclick="closeModal('change-password-modal')">×</span>
+            <h3>Şifre Değiştir</h3>
+            <form id="changePasswordForm" onsubmit="handleChangePasswordSubmit(event)">
+                <div class="form-group">
+                    <label>Eski Şifre</label>
+                    <input type="password" id="cp-old" style="width:100%; padding:8px; margin-bottom:10px;" required>
+                </div>
+                <div class="form-group">
+                    <label>Yeni Şifre</label>
+                    <input type="password" id="cp-new" style="width:100%; padding:8px; margin-bottom:10px;" required>
+                </div>
+                <div class="form-group">
+                    <label>Yeni Şifre (Tekrar)</label>
+                    <input type="password" id="cp-confirm" style="width:100%; padding:8px; margin-bottom:10px;"
+                        required>
+                </div>
+                <button type="submit" class="btn-submit" style="background:var(--primary);">Güncelle</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MARKET AD MODAL (Public) -->
+    <div id="modal-ad" class="modal-overlay" onclick="closeModal('modal-ad')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-btn" onclick="closeModal('modal-ad')">×</span>
+            <h3>İlan Ver</h3>
+            <p>İlanlarınız muhtarlık onayından sonra yayınlanır.</p>
+            <form onsubmit="handleMarketSubmit(event)">
+                <div class="form-group"><input type="text" id="mTitle" placeholder="Ürün Adı" required></div>
+                <div class="form-group"><input type="text" id="mPrice" placeholder="Fiyat" required></div>
+                <div class="form-group"><input type="text" id="mPhone" placeholder="Telefon Numaranız" required></div>
+                <div class="form-group"><textarea id="mDesc" placeholder="Açıklama" rows="3"></textarea></div>
+                <button type="submit" class="btn-submit idea-btn">Başvuru Yap</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADMIN CONTENT MODAL -->
+    <div id="admin-modal" class="modal-overlay" onclick="closeModal('admin-modal')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-btn" onclick="closeModal('admin-modal')">×</span>
+            <h3 id="adminModalTitle">İçerik Ekle</h3>
+            <form id="adminContentForm" onsubmit="handleAdminSubmit(event)">
+                <input type="hidden" id="adminContentType">
+                <div class="form-group" id="field-title"><label>Başlık / İsim</label><input type="text" id="acTitle">
+                </div>
+                <div class="form-group" id="field-detail"><label>Detay / Açıklama</label><input type="text"
+                        id="acDetail"></div>
+                <div class="form-group" id="field-date"><label>Tarih / Fiyat</label><input type="text" id="acDate">
+                </div>
+                <div class="form-group" id="field-image"><label>Resim URL (Opsiyonel)</label><input type="text"
+                        id="acImage"></div>
+
+                <button type="submit" class="btn-submit" style="background: var(--primary);">Ekle / Güncelle</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- WELCOME MODAL (Otomatik Açılan) -->
+    <div id="welcome-announcement-modal" class="modal-overlay" onclick="closeModal('welcome-announcement-modal')">
+        <div class="modal-content" style="max-width: 600px; padding: 40px; text-align: center;"
+            onclick="event.stopPropagation()">
+            <span class="close-btn" onclick="closeModal('welcome-announcement-modal')"
+                style="font-size: 2rem;">&times;</span>
+            <div style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"><i class="fas fa-bullhorn"></i>
+            </div>
+            <h2
+                style="font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 20px; color: var(--text-main);">
+                Önemli Duyurular</h2>
+            <div id="welcome-list"
+                style="text-align: left; font-size: 1.2rem; line-height: 1.6; color: #444; margin-bottom: 30px;">
+                <!-- JS ile doldurulacak -->
+                <p>Yükleniyor...</p>
+            </div>
+            <button class="btn-submit" onclick="closeModal('welcome-announcement-modal')"
+                style="background: var(--primary); font-size: 1.1rem; padding: 12px 40px;">Okudum, Teşekkürler</button>
+        </div>
+    </div>
+
+    <!-- ADMIN ANNOUNCEMENT MODAL -->
+    <div id="admin-announcement-modal" class="modal-overlay" onclick="closeModal('admin-announcement-modal')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-btn" onclick="closeModal('admin-announcement-modal')">×</span>
+            <h3>Duyuruları Düzenle</h3>
+            <p>Duyuruları tek tek satır olarak giriniz.</p>
+            <form id="adminAnnouncementForm" onsubmit="handleAnnouncementSubmit(event)">
+                <div id="announcement-list-container" style="max-height:300px; overflow-y:auto; margin-bottom:15px;">
+                    <!-- Javascript will populate this -->
+                </div>
+                <button type="button" onclick="addAnnouncementInput()"
+                    style="background:#f39c12; border:none; color:white; padding:5px 10px; border-radius:4px; margin-bottom:10px; cursor:pointer;">
+                    <i class="fas fa-plus"></i> Yeni Satır Ekle
+                </button>
+                <button type="submit" class="btn-submit" style="background: var(--primary);">Kaydet ve Yayınla</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADMIN REPLY MODAL -->
+    <div id="admin-reply-modal" class="modal-overlay" onclick="closeModal('admin-reply-modal')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-btn" onclick="closeModal('admin-reply-modal')">×</span>
+            <h3>Yanıt Oluştur</h3>
+            <p>Vatandaşın bildirimine yanıtınız:</p>
+            <form id="adminReplyForm" onsubmit="handleAdminReplySubmit(event)">
+                <input type="hidden" id="replyTicketId">
+                <div class="form-group">
+                    <textarea id="replyText" rows="5" placeholder="Yanıtınızı buraya yazınız..." required></textarea>
+                </div>
+                <button type="submit" class="btn-submit" style="background: var(--primary);">Yanıtı Gönder &
+                    Çözümle</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- LIGHTBOX MODAL -->
+    <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <img id="lightbox-img" src="" alt="Tam Ekran">
+    </div>
+
+    <script src="script.js?v=9"></script>
+</body>
+
+</html>

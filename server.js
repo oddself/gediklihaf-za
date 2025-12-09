@@ -5,18 +5,98 @@ const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+
+// Manual .env loading fallback
+try {
+    const envPath = path.join(__dirname, '.env');
+    if (fs.existsSync(envPath)) {
+        const envConfig = fs.readFileSync(envPath, 'utf8');
+        envConfig.split('\n').forEach(line => {
+            const [key, value] = line.split('=');
+            if (key && value) {
+                process.env[key.trim()] = value.trim();
+            }
+        });
+    }
+} catch (e) { console.error("Env load error:", e); }
 
 const app = express();
 const PORT = 3000;
+
+// Fallback for testing environment
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin_pass_321';
+const SECRET_KEY = process.env.JWT_SECRET || 'super_secret_key_123';
+
+console.log("DEBUG LOAD:", process.env.JWT_SECRET ? "Loaded form Env" : "Using Fallback");
+
+if (!ADMIN_PASSWORD || !SECRET_KEY) {
+    // This should now only happen if I removed fallbacks
+    console.error("CRITICAL ERROR: JWT_SECRET or ADMIN_PASSWORD not defined");
+    process.exit(1);
+}
+
 const DB_FILE = path.join(__dirname, 'db.json');
-const SECRET_KEY = process.env.JWT_SECRET || 'gedikli_secret_key_change_me';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'gedikli32'; // Default fallback
 
 // Middleware
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // For script tags
+            scriptSrcAttr: ["'unsafe-inline'"], // CRITICAL: For inline event handlers (onclick="...")
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
+            imgSrc: ["'self'", "data:", "https:", "blob:"],
+            connectSrc: ["'self'", "https://api.open-meteo.com", "http://api.aladhan.com"],
+            upgradeInsecureRequests: null
+        },
+    },
+})); // Security Headers
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static(__dirname));
+
+// Rate Limiting
+const globalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per windowMs
+    message: { success: false, message: 'Çok fazla istek gönderdiniz, lütfen bekleyin.' }
+});
+
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 10, // Limit each IP to 10 login/register requests per windowMs
+    message: { success: false, message: 'Çok fazla başarısız giriş denemesi. Lütfen bekleyin.' }
+});
+
+app.use('/api/', globalLimiter);
+app.use('/api/register', authLimiter);
+app.use('/api/login', authLimiter);
+const PUBLIC_DIR = path.join(__dirname, 'public');
+
+app.use(express.static(PUBLIC_DIR));
+
+// Helper middleware for optional auth
+const authenticateTokenOptional = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        req.user = null;
+        return next();
+    }
+
+    jwt.verify(token, SECRET_KEY, (err, user) => {
+        if (err) req.user = null;
+        else req.user = user;
+        next();
+    });
+};
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
+});
 
 // Helper: Read DB
 const readDb = () => {
@@ -93,12 +173,7 @@ app.post('/api/register', async (req, res) => {
 // 2. LOGIN
 app.post('/api/login', async (req, res) => {
     const { contact, password } = req.body;
-
-    // Admin Check
-    if (!contact && password === ADMIN_PASSWORD) {
-        const token = jwt.sign({ role: 'admin', name: 'Yönetici' }, SECRET_KEY, { expiresIn: '2h' });
-        return res.json({ success: true, token, user: 'Yönetici', role: 'admin' });
-    }
+    // REMOVED: Magic Admin Login using only password. Admin must register/login normally.
 
     const db = readDb();
     const user = db.users?.find(u => u.contact === contact);
@@ -144,9 +219,18 @@ app.post('/api/change-password', authenticateToken, async (req, res) => {
 });
 
 // 4. GENERIC PUBLIC READ
+const ALLOWED_PUBLIC_TYPES = ['genealogy', 'gallery', 'documents', 'deceased'];
+
 app.get('/api/content/:type', (req, res) => {
+    const { type } = req.params;
+
+    // Security: Whitelist Allowed Types
+    if (!ALLOWED_PUBLIC_TYPES.includes(type)) {
+        return res.status(403).json({ success: false, message: 'Erişim engellendi.' });
+    }
+
     const db = readDb();
-    res.json(db[req.params.type] || []);
+    res.json(db[type] || []);
 });
 
 app.get('/api/announcements', (req, res) => {
@@ -154,11 +238,22 @@ app.get('/api/announcements', (req, res) => {
     res.json(db.announcements || []);
 });
 
-app.get('/api/market', (req, res) => {
+app.get('/api/market', authenticateTokenOptional, (req, res) => {
     const db = readDb();
-    // In a real scenario, filter 'approved' for public here.
-    // For now, we send all and let frontend decide UI, but usually backend shd filter.
-    res.json(db.market || []);
+    let items = db.market || [];
+
+    // Filter logic
+    if (req.user && req.user.role === 'admin') {
+        // Admin sees everything
+    } else if (req.user) {
+        // User sees approved AND their own pending/approved
+        items = items.filter(i => i.status === 'approved' || i.owner === req.user.contact);
+    } else {
+        // Guest sees only approved
+        items = items.filter(i => i.status === 'approved');
+    }
+
+    res.json(items);
 });
 
 // 5. PROTECTED WRITES (Admin Only)
@@ -171,6 +266,12 @@ app.post('/api/announcements', authenticateToken, requireAdmin, (req, res) => {
 
 app.post('/api/content/:type', authenticateToken, requireAdmin, (req, res) => {
     const { type } = req.params;
+
+    const ALLOWED_ADMIN_POST_TYPES = ['genealogy', 'gallery', 'documents', 'deceased'];
+    if (!ALLOWED_ADMIN_POST_TYPES.includes(type)) {
+        return res.status(400).json({ success: false, message: 'Geçersiz içerik türü.' });
+    }
+
     const db = readDb();
     if (!db[type]) db[type] = [];
 
