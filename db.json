@@ -39,6 +39,46 @@
       "userId": "0531",
       "message": "çözün",
       "adminResponse": "çözüldü"
+    },
+    {
+      "id": "1765302065553",
+      "status": "resolved",
+      "date": "09.12.2025",
+      "type": "fault",
+      "message": "Test Ticket for Verification",
+      "name": "Verifier",
+      "userId": "verifier_1",
+      "adminResponse": "çözüldü inşallah"
+    },
+    {
+      "id": "1765302161727",
+      "status": "resolved",
+      "date": "09.12.2025",
+      "type": "fault",
+      "name": "bayramgarip",
+      "userId": "0531",
+      "message": "arızam varrrrrr\n",
+      "adminResponse": "tamammmmmmmmmmm"
+    },
+    {
+      "id": "1765302168503",
+      "status": "resolved",
+      "date": "09.12.2025",
+      "type": "idea",
+      "name": "bayramgarip",
+      "userId": "0531",
+      "message": "fikrim varrrrrrrrrrrr",
+      "adminResponse": "lütfen admin ile iletişime geçiniz"
+    },
+    {
+      "id": "1765302302522",
+      "status": "resolved",
+      "date": "09.12.2025",
+      "type": "fault",
+      "name": "meryem",
+      "userId": "meryem",
+      "message": "sulama ne zaman başlayacak\n",
+      "adminResponse": "1 hafta içirinde başlayacak lütfen duyuruları takip ediniz"
     }
   ],
   "market": [
@@ -53,18 +93,20 @@
       "image": "images/default_market.jpg"
     },
     {
-      "id": 1765049767544,
-      "title": "Test Listing",
-      "price": "100 TL",
-      "phone": "5551234567",
-      "desc": "satlık arsa",
+      "id": 1765301765865,
+      "title": "seksenlik",
+      "price": "1.500.000",
+      "phone": "53165632",
+      "desc": "satılık tarla",
       "owner": "0531",
       "status": "approved",
       "image": "images/default_market.jpg"
     }
   ],
   "announcements": [
-    "Browser Test Persistence"
+    "Browser Test Persistence",
+    "duyurular nere gitti",
+    "duyuru"
   ],
   "supportTickets": [
     {
@@ -85,7 +127,7 @@
       "id": 1764956186067,
       "name": "Test User",
       "contact": "test@example.com",
-      "password": "password123",
+      "password": "$2b$10$gQezo1NByo0S72qQuH1FYeGw7oNhr3YX07erUR7IllYWz6L71HzVS",
       "role": "user",
       "joinedAt": "2025-12-05T17:36:26.067Z"
     },
@@ -93,7 +135,7 @@
       "id": 1764956394146,
       "name": "Browser Test User",
       "contact": "browser_test_123",
-      "password": "pass123",
+      "password": "$2b$10$NwnjjQYGqRdidBITcYMzge0ohFcjCP8bdDWTZGqivT.JU6vDhFsdO",
       "role": "user",
       "joinedAt": "2025-12-05T17:39:54.146Z"
     },
@@ -101,7 +143,7 @@
       "id": 1764957086470,
       "name": "teeest user",
       "contact": "browser_test_1234",
-      "password": "322132",
+      "password": "$2b$10$D0rsdZtI87N.FMrJJuLZEuKAICaANvFb3JnAGDuz/PlPPuPnuh.SG",
       "role": "user",
       "joinedAt": "2025-12-05T17:51:26.470Z"
     },
@@ -109,7 +151,7 @@
       "id": 1765005483564,
       "name": "Tester",
       "contact": "test1765005483544@example.com",
-      "password": "123",
+      "password": "$2b$10$6sXw.qpLDks8ngQk/Zc9le7u6jN1bGfijjfXorCdrFYeJDE8.cytS",
       "role": "user",
       "joinedAt": "2025-12-06T07:18:03.564Z"
     },
@@ -117,7 +159,7 @@
       "id": 1765020437223,
       "name": "Browser Test User",
       "contact": "browser_test",
-      "password": "1234556789",
+      "password": "$2b$10$jGSFQOa81wTK2/aY01Np/O6iU0bZ3q5z4XndQg/UOFV3lb1MqNvn6",
       "role": "user",
       "joinedAt": "2025-12-06T11:27:17.223Z"
     },
@@ -125,7 +167,7 @@
       "id": 1765022356629,
       "name": "Browser Test UserTest User",
       "contact": "0555",
-      "password": "pass123pass",
+      "password": "$2b$10$M05C5s5OnJC8YZTwPJ0QfOwRiQYE9FQl1A8MJPSh569j8ss41qZRC",
       "role": "user",
       "joinedAt": "2025-12-06T11:59:16.629Z"
     },
@@ -133,7 +175,7 @@
       "id": 1765022730063,
       "name": "Browser Test User23",
       "contact": "05555",
-      "password": "12345",
+      "password": "$2b$10$5l4ARXEbEi38dUiolSNQ.uf4RIvV3fgKJm6Hn6GiQqXEsREzNFIVK",
       "role": "user",
       "joinedAt": "2025-12-06T12:05:30.063Z"
     },
@@ -141,7 +183,7 @@
       "id": 1765022770911,
       "name": "bayramgarip",
       "contact": "0531",
-      "password": "1234",
+      "password": "$2b$10$10DfSS4toPEGYV6hg0N2VOLbRNp7theYXVa.hGhz8oNKTKBDJJKuy",
       "role": "user",
       "joinedAt": "2025-12-06T12:06:10.911Z"
     },
@@ -149,7 +191,7 @@
       "id": 1765047586428,
       "name": "Browser Test UserTest User 1",
       "contact": "testuser1",
-      "password": "pass123123",
+      "password": "$2b$10$q1zNnjITplSEw1rkekRa4OVe1tgP3rCyGVFj5mys8336xQdPt16h6",
       "role": "user",
       "joinedAt": "2025-12-06T18:59:46.428Z"
     },
@@ -157,7 +199,7 @@
       "id": 1765047761601,
       "name": "Browser Test UserFinal User",
       "contact": "finaluser",
-      "password": "pass123123",
+      "password": "$2b$10$qy4gUI3JUcCkfoTEIamX6uY9L2UbiAMRG81JWfrjm0WWTHX2mR.3K",
       "role": "user",
       "joinedAt": "2025-12-06T19:02:41.601Z"
     },
@@ -165,7 +207,7 @@
       "id": 1765053619614,
       "name": "Browser Test UserPassTestUser",
       "contact": "5551234567",
-      "password": "pass123123",
+      "password": "$2b$10$gue1hz3fe6tW/b3i6N.JBu5mT619VvwYU1MJm61SHAw7qozxbQoQy",
       "role": "user",
       "joinedAt": "2025-12-06T20:40:19.614Z"
     },
@@ -173,9 +215,65 @@
       "id": 1765053734546,
       "name": "Browser Test UserPassTestUser2",
       "contact": "5550000000",
-      "password": "pass123123",
+      "password": "$2b$10$S66d4smvapXFTYjfeGeXEumU31oFzQ0d7R4TYXDdZX4xImz4eq/k2",
       "role": "user",
       "joinedAt": "2025-12-06T20:42:14.546Z"
+    },
+    {
+      "id": 1765150018241,
+      "name": "Secure Tester",
+      "contact": "test_secure_1765150017931@example.com",
+      "password": "$2b$10$CSAZ6FAl1WjWUEEujaXMzO7yNU7zv1MP9Ynq7/z72mcFyXQmYfAKS",
+      "role": "user",
+      "joinedAt": "2025-12-07T23:26:58.241Z"
+    },
+    {
+      "id": 1765150324299,
+      "name": "Browser Test UserBrowser Test User",
+      "contact": "browser_test_1700",
+      "password": "$2b$10$Z9B0X1gi2t.KtWZ3yCa/weDaejAbA6IHnPIYwS1Hwf//pMF.mWHIq",
+      "role": "user",
+      "joinedAt": "2025-12-07T23:32:04.299Z"
+    },
+    {
+      "id": 1765150386203,
+      "name": "Browser Test UserBrowser Test UserBrowser Test User Secure",
+      "contact": "browser_test_1700browser_test_1701",
+      "password": "$2b$10$WKWPqQGEUAcHKOIifO4a6.jBIGO5HommzEK7dBTvSStkhWyblEsZS",
+      "role": "user",
+      "joinedAt": "2025-12-07T23:33:06.203Z"
+    },
+    {
+      "id": 1765150474750,
+      "name": "Browser Test UserBrowser Test UserBrowser Test User SecureBrowser Test Final",
+      "contact": "browser_test_1700browser_test_1701browser_test_final",
+      "password": "$2b$10$De.OBfmWOLImmY0SaNMql.yMKDkCrIzgQwUwLoAlvrAMYJZs05vNC",
+      "role": "user",
+      "joinedAt": "2025-12-07T23:34:34.750Z"
+    },
+    {
+      "id": 1765150640448,
+      "name": "Browser Test UserFinal Fix User",
+      "contact": "browser_final_fix",
+      "password": "$2b$10$7rQy4dJK0CvNUbikrwHzOekN9JhzG9UP6u84ZkyRCRBfUcwYDyDyu",
+      "role": "user",
+      "joinedAt": "2025-12-07T23:37:20.448Z"
+    },
+    {
+      "id": 1765150773984,
+      "name": "Fixed Browser User",
+      "contact": "fixed_test_user",
+      "password": "$2b$10$QJkElGm8PgDzuSzLDWNl6eWA1rdLZQUl8YVgt0fJNjejJteqYPS2y",
+      "role": "user",
+      "joinedAt": "2025-12-07T23:39:33.984Z"
+    },
+    {
+      "id": 1765302232212,
+      "name": "meryem",
+      "contact": "meryem",
+      "password": "$2b$10$ajE4lld36XtGiYqsrxk9JO4ghzl/ECmDtpHUZyYAtrIMSIE77tt5K",
+      "role": "user",
+      "joinedAt": "2025-12-09T17:43:52.212Z"
     }
   ],
   "genealogy": [
@@ -206,6 +304,10 @@
       "image": "",
       "src": "",
       "name": "günallar"
+    },
+    {
+      "id": 1765150018565,
+      "title": "Admin Item 123"
     }
   ],
   "gallery": [

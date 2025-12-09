@@ -5,6 +5,32 @@ const API_URL = (window.location.protocol === 'file:' || window.location.hostnam
     ? 'http://localhost:3000/api'
     : '/api';
 
+// --- AUTH HELPER ---
+async function authenticatedFetch(url, options = {}) {
+    const token = safeStorage.getItem('authToken');
+    const headers = {
+        'Content-Type': 'application/json',
+        ...options.headers
+    };
+
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(url, {
+        ...options,
+        headers
+    });
+
+    if (response.status === 401 || response.status === 403) {
+        // Optional: Logout if token is invalid
+        // safeStorage.clear();
+        // createToast('Oturum süresi doldu.', 'error');
+    }
+
+    return response;
+}
+
 // --- WEATHER & PRAYER API INTEGRATION ---
 async function fetchWeatherData() {
     try {
@@ -179,8 +205,6 @@ window.openChangePasswordModal = function () {
     const modal = document.getElementById('change-password-modal');
     if (modal) {
         modal.classList.add('active');
-        modal.style.visibility = 'visible';
-        modal.style.opacity = '1';
     } else {
         console.error("Change password modal not found");
     }
@@ -209,7 +233,7 @@ window.handleChangePasswordSubmit = async function (e) {
     }
 
     try {
-        const res = await fetch(`${API_URL}/change-password`, {
+        const res = await authenticatedFetch(`${API_URL}/change-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ contact, oldPassword: oldPass, newPassword: newPass })
@@ -259,7 +283,7 @@ function checkAdminControls() {
 // --- DUYURU YÖNETİMİ ---
 window.openAnnouncementModal = async function () {
     try {
-        const res = await fetch(`${API_URL}/announcements`);
+        const res = await authenticatedFetch(`${API_URL}/announcements`);
         const data = await res.json();
 
         const container = document.getElementById('announcement-list-container');
@@ -272,8 +296,6 @@ window.openAnnouncementModal = async function () {
         }
 
         document.getElementById('admin-announcement-modal').classList.add('active');
-        document.getElementById('admin-announcement-modal').style.visibility = 'visible';
-        document.getElementById('admin-announcement-modal').style.opacity = '1';
     } catch (err) {
         console.error(err);
         showToast('Duyurular yüklenemedi', 'error');
@@ -301,7 +323,7 @@ window.handleAnnouncementSubmit = async function (e) {
     const announcements = Array.from(inputs).map(i => i.value).filter(v => v.trim() !== '');
 
     try {
-        await fetch(`${API_URL}/announcements`, {
+        await authenticatedFetch(`${API_URL}/announcements`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ announcements })
@@ -320,7 +342,7 @@ window.handleAnnouncementSubmit = async function (e) {
 // --- DYNAMIC CONTENT MANAGER ---
 async function loadContent(type) {
     try {
-        const res = await fetch(`${API_URL}/content/${type}`);
+        const res = await authenticatedFetch(`${API_URL}/content/${type}`);
         const data = await res.json();
 
         // Cache data
@@ -439,7 +461,7 @@ window.handleAdminSubmit = async function (e) {
     };
 
     try {
-        const res = await fetch(`${API_URL}/content/${type}`, {
+        const res = await authenticatedFetch(`${API_URL}/content/${type}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -460,7 +482,7 @@ window.deleteItem = async function (type, id) {
 
     try {
         // Use generic endpoint which works for market too since it's just a key in db.json
-        await fetch(`${API_URL}/content/${type}/${id}`, { method: 'DELETE' });
+        await authenticatedFetch(`${API_URL}/content/${type}/${id}`, { method: 'DELETE' });
         showToast('İçerik Silindi');
 
         if (type === 'market') {
@@ -509,7 +531,7 @@ let currentAnnouncementIndex = 0;
 
 async function fetchAnnouncements() {
     try {
-        const res = await fetch(`${API_URL}/announcements?_t=${Date.now()}`);
+        const res = await authenticatedFetch(`${API_URL}/announcements?_t=${Date.now()}`);
         const data = await res.json();
         const slider = document.getElementById('announcement-slider');
         const welcomeList = document.getElementById('welcome-list');
@@ -576,8 +598,6 @@ function checkWelcomeMessage() {
             const modal = document.getElementById('welcome-announcement-modal');
             if (modal) {
                 modal.classList.add('active');
-                modal.style.visibility = 'visible';
-                modal.style.opacity = '1';
                 sessionStorage.setItem('welcomeShown', 'true');
             }
         }, 1000); // Küçük bir gecikme ile aç
@@ -586,7 +606,7 @@ function checkWelcomeMessage() {
 
 async function loadMarketItems() {
     try {
-        const res = await fetch(`${API_URL}/market`);
+        const res = await authenticatedFetch(`${API_URL}/market`);
         const items = await res.json();
 
         // Cache for search
@@ -677,7 +697,7 @@ window.handleMarketSubmit = async function (e) {
     };
 
     try {
-        const res = await fetch(`${API_URL}/market`, {
+        const res = await authenticatedFetch(`${API_URL}/market`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -696,7 +716,7 @@ window.handleMarketSubmit = async function (e) {
 
 window.approveMarketItem = async function (id) {
     try {
-        await fetch(`${API_URL}/market/approve/${id}`, { method: 'POST' });
+        await authenticatedFetch(`${API_URL}/market/approve/${id}`, { method: 'POST' });
         showToast('İlan Onaylandı');
         loadMarketItems();
     } catch (err) {
@@ -720,7 +740,7 @@ window.handleRegister = async function (e) {
     }
 
     try {
-        const res = await fetch(`${API_URL}/register`, {
+        const res = await authenticatedFetch(`${API_URL}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, contact, password })
@@ -753,7 +773,7 @@ window.handleSupportSubmit = async function (e, type) {
     }
 
     try {
-        const res = await fetch(`${API_URL}/support`, {
+        const res = await authenticatedFetch(`${API_URL}/support`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ type, timestamp: Date.now() })
@@ -827,13 +847,18 @@ window.toggleLoginMode = function () {
         // Disable admin input
         adminCode.disabled = true;
         userContact.focus();
-
         isUserLoginMode = true;
     }
 };
 
+// Clear storage on login load to prevent stale state
+if (window.location.href.includes('login.html')) {
+    safeStorage.clear();
+}
+
 window.handleLogin = async function (e) {
     e.preventDefault();
+    console.log("Login submitted...");
 
     let password, contact;
 
@@ -847,7 +872,7 @@ window.handleLogin = async function (e) {
     } else {
         // Admin Mode
         password = document.getElementById('adminCode').value.trim();
-        contact = null; // Backend treats null contact + valid pwd as potential admin or error
+        contact = null;
         if (!password) {
             showToast('Lütfen yönetici kodunu giriniz.', 'error');
             return;
@@ -855,31 +880,35 @@ window.handleLogin = async function (e) {
     }
 
     try {
-        const res = await fetch(`${API_URL}/login`, {
+        console.log("Fetching login...");
+        const res = await authenticatedFetch(`${API_URL}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ password, contact })
         });
 
+        console.log("Login status:", res.status);
         const data = await res.json();
+        console.log("Login response:", data);
 
         if (data.success) {
             safeStorage.setItem("villageAccess", "Authorized");
+            safeStorage.setItem("authToken", data.token); // Store JWT
             safeStorage.setItem("gedikliUser", data.fullName || data.user);
             safeStorage.setItem("userRole", data.role);
             safeStorage.setItem("userContact", data.user);
 
             showToast(`Giriş Başarılı! Hoş geldiniz, ${data.fullName || ''}`);
+            console.log("Redirecting to index.html...");
             setTimeout(() => window.location.href = "index.html", 1000);
         } else {
             showToast(data.message, 'error');
         }
     } catch (err) {
+        console.error("Login Error:", err);
         showToast("Sunucu ile bağlantı kurulamadı.", 'error');
     }
 };
-
-// --- DİĞER FONKSİYONLAR ---
 
 function updateUserStatus() {
     const access = safeStorage.getItem("villageAccess");
@@ -925,12 +954,13 @@ window.closeModal = function (modalId) {
 
 window.openProfileModal = function () {
     const name = safeStorage.getItem("gedikliUser") || "Misafir";
-    const role = safeStorage.getItem("userRole") === 'admin' ? "Yönetici" : "Misafir Üye";
+    const role = safeStorage.getItem("userRole");
+    const roleLabel = role === 'admin' ? "Yönetici" : ((safeStorage.getItem("villageAccess") === "Authorized") ? "Köy Sakini" : "Bilinmiyor");
     const contact = safeStorage.getItem("userContact") || "Giriş Yapılmadı";
 
     document.getElementById('profileName').innerText = name;
-    document.getElementById('profileRole').innerText = role;
-    document.getElementById('profileRoleDetail').innerText = role;
+    document.getElementById('profileRole').innerText = roleLabel;
+    document.getElementById('profileRoleDetail').innerText = roleLabel;
     document.getElementById('profileContact').innerText = contact;
 
     window.openModal('profileModal');
@@ -994,7 +1024,7 @@ window.submitTicket = async function (type) {
     if (!userId) return showToast('Lütfen önce giriş yapın.', 'error');
 
     try {
-        const res = await fetch(`${API_URL}/tickets`, {
+        const res = await authenticatedFetch(`${API_URL}/tickets`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1021,7 +1051,7 @@ window.loadUserTickets = async function () {
     if (!userId) return;
 
     try {
-        const res = await fetch(`${API_URL}/tickets?userId=${userId}`);
+        const res = await authenticatedFetch(`${API_URL}/tickets?userId=${userId}`);
         const tickets = await res.json();
         renderTickets(tickets, 'user-tickets-list', false);
     } catch (err) { console.error(err); }
@@ -1031,7 +1061,7 @@ window.loadAdminTickets = async function () {
     if (safeStorage.getItem("userRole") !== 'admin') return;
 
     try {
-        const res = await fetch(`${API_URL}/tickets?role=admin`);
+        const res = await authenticatedFetch(`${API_URL}/tickets?role=admin`);
         const tickets = await res.json();
         renderTickets(tickets, 'admin-tickets-list', true);
     } catch (err) { console.error(err); }
@@ -1095,7 +1125,7 @@ window.handleAdminReplySubmit = async function (e) {
     }
 
     try {
-        await fetch(`${API_URL}/tickets/${id}/respond`, {
+        await authenticatedFetch(`${API_URL}/tickets/${id}/respond`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ response })
@@ -1134,7 +1164,7 @@ window.submitTicket = async function (type) {
     if (!userId) return showToast('Lütfen önce giriş yapın.', 'error');
 
     try {
-        const res = await fetch(`${API_URL}/tickets`, {
+        const res = await authenticatedFetch(`${API_URL}/tickets`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1161,7 +1191,7 @@ window.loadUserTickets = async function () {
     if (!userId) return;
 
     try {
-        const res = await fetch(`${API_URL}/tickets?userId=${userId}`);
+        const res = await authenticatedFetch(`${API_URL}/tickets?userId=${userId}`);
         const tickets = await res.json();
         renderTickets(tickets, 'user-tickets-list', false);
     } catch (err) { console.error(err); }
@@ -1171,7 +1201,7 @@ window.loadAdminTickets = async function () {
     if (safeStorage.getItem("userRole") !== 'admin') return;
 
     try {
-        const res = await fetch(`${API_URL}/tickets?role=admin`);
+        const res = await authenticatedFetch(`${API_URL}/tickets?role=admin`);
         const tickets = await res.json();
         renderTickets(tickets, 'admin-tickets-list', true);
     } catch (err) { console.error(err); }
@@ -1211,7 +1241,7 @@ window.replyToTicket = async function (id) {
     if (!response) return;
 
     try {
-        await fetch(`${API_URL}/tickets/${id}/respond`, {
+        await authenticatedFetch(`${API_URL}/tickets/${id}/respond`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ response })

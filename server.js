@@ -3,95 +3,83 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 const app = express();
 const PORT = 3000;
 const DB_FILE = path.join(__dirname, 'db.json');
+const SECRET_KEY = process.env.JWT_SECRET || 'gedikli_secret_key_change_me';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'gedikli32'; // Default fallback
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static(__dirname)); // Serve static files
+app.use(express.static(__dirname));
 
-// Ensure DB file exists
-if (!fs.existsSync(DB_FILE)) {
-    const initialData = {
-        users: [],
-        market: [],
-        announcements: ["Sitemize Hoş Geldiniz!", "Köy Pazarı açılmıştır."]
-    };
-    fs.writeFileSync(DB_FILE, JSON.stringify(initialData, null, 2));
-}
-
-// Helper to read DB
+// Helper: Read DB
 const readDb = () => {
     try {
-        const data = fs.readFileSync(DB_FILE, 'utf8');
-        return JSON.parse(data);
+        if (!fs.existsSync(DB_FILE)) return { users: [], market: [], announcements: [] };
+        return JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
     } catch (err) {
-        console.error("Database read error:", err);
-        return { users: [], market: [], announcements: [] };
+        console.error("DB Read Error:", err);
+        return { users: [], market: [] };
     }
 };
 
-// Helper to write DB
+// Helper: Write DB
 const writeDb = (data) => {
-    try {
-        fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
-    } catch (err) {
-        console.error("Database write error:", err);
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
+};
+
+// --- AUTH MIDDLEWARE ---
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) return res.status(401).json({ success: false, message: 'Oturum açmanız gerekiyor.' });
+
+    jwt.verify(token, SECRET_KEY, (err, user) => {
+        if (err) return res.status(403).json({ success: false, message: 'Geçersiz oturum.' });
+        req.user = user;
+        next();
+    });
+};
+
+const requireAdmin = (req, res, next) => {
+    if (req.user && req.user.role === 'admin') {
+        next();
+    } else {
+        res.status(403).json({ success: false, message: 'Bu işlem için yetkiniz yok.' });
     }
 };
 
 // --- ROUTES ---
 
-// Login API
-app.post('/api/login', (req, res) => {
-    const { password, contact } = req.body;
-    console.log(`Login Attempt: ${contact || 'Admin Check'} - Pwd: ${password}`);
-
-    // Admin Master Key
-    if (password === 'gedikli32') {
-        return res.json({ success: true, token: 'admin_token', user: 'Köy Sakini (Yönetici)', role: 'admin' });
-    }
-
-    const db = readDb();
-    const validUser = db.users?.find(u => {
-        if (contact && u.contact !== contact) return false;
-        return u.password === password;
-    });
-
-    if (validUser) {
-        res.json({
-            success: true,
-            token: `user_${validUser.id}`,
-            user: validUser.contact,
-            fullName: validUser.name || validUser.contact,
-            role: 'user'
-        });
-    } else {
-        res.status(401).json({ success: false, message: 'Hatalı şifre veya kullanıcı bulunamadı.' });
-    }
-});
-
-app.post('/api/register', (req, res) => {
-    const { contact, password, name } = req.body;
-    if (!contact || !password || !name) {
-        return res.status(400).json({ success: false, message: 'Eksik bilgi. Lütfen Ad Soyad dahil tüm alanları doldurun.' });
-    }
+// 1. REGISTER
+app.post('/api/register', async (req, res) => {
+    const { name, contact, password } = req.body;
+    if (!name || !contact || !password) return res.status(400).json({ success: false, message: 'Eksik bilgi.' });
 
     const db = readDb();
     if (!db.users) db.users = [];
 
+    // Check existing
     if (db.users.find(u => u.contact === contact)) {
-        return res.status(400).json({ success: false, message: 'Bu kullanıcı zaten kayıtlı.' });
+        return res.status(400).json({ success: false, message: 'Kullanıcı zaten kayıtlı.' });
     }
+
+    // Hash Password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = {
         id: Date.now(),
         name,
         contact,
-        password,
+        password: hashedPassword,
         role: 'user',
         joinedAt: new Date().toISOString()
     };
@@ -99,244 +87,221 @@ app.post('/api/register', (req, res) => {
     db.users.push(newUser);
     writeDb(db);
 
-    console.log("New User Registered:", name);
-    res.json({ success: true, message: 'Kayıt başarılı! Giriş yapabilirsiniz.' });
+    res.json({ success: true, message: 'Kayıt başarılı.' });
 });
 
-app.post('/api/change-password', (req, res) => {
-    const { contact, oldPassword, newPassword } = req.body;
+// 2. LOGIN
+app.post('/api/login', async (req, res) => {
+    const { contact, password } = req.body;
 
-    // Admin check
-    if (contact === 'admin' || contact === 'Köy Sakini (Yönetici)') {
-        if (oldPassword === 'gedikli32') {
-            // Admin master key cannot be changed via this UI for safety in this demo, 
-            // but let's simulate success or return error.
-            return res.status(403).json({ success: false, message: 'Ana yönetici şifresi buradan değiştirilemez.' });
-        }
+    // Admin Check
+    if (!contact && password === ADMIN_PASSWORD) {
+        const token = jwt.sign({ role: 'admin', name: 'Yönetici' }, SECRET_KEY, { expiresIn: '2h' });
+        return res.json({ success: true, token, user: 'Yönetici', role: 'admin' });
     }
 
     const db = readDb();
-    const userIndex = db.users.findIndex(u => u.contact === contact);
+    const user = db.users?.find(u => u.contact === contact);
 
-    if (userIndex === -1) {
-        return res.status(404).json({ success: false, message: 'Kullanıcı bulunamadı.' });
-    }
+    if (!user) return res.status(401).json({ success: false, message: 'Kullanıcı bulunamadı.' });
 
-    if (db.users[userIndex].password !== oldPassword) {
-        return res.status(400).json({ success: false, message: 'Eski şifre hatalı.' });
-    }
+    const validPass = await bcrypt.compare(password, user.password);
+    if (!validPass) return res.status(401).json({ success: false, message: 'Hatalı şifre.' });
 
-    db.users[userIndex].password = newPassword;
-    writeDb(db);
+    const token = jwt.sign({ id: user.id, role: user.role, contact: user.contact }, SECRET_KEY, { expiresIn: '24h' });
 
-    res.json({ success: true, message: 'Şifreniz başarıyla değiştirildi.' });
+    res.json({
+        success: true,
+        token,
+        user: user.contact,
+        fullName: user.name,
+        role: user.role
+    });
 });
 
-// --- GENERIC CONTENT API (Genealogy, Gallery, Deceased, etc.) ---
+// 3. CHANGE PASSWORD
+app.post('/api/change-password', authenticateToken, async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+    const db = readDb();
+
+    // Admin Master Key Protection
+    if (req.user.role === 'admin') {
+        return res.status(403).json({ success: false, message: 'Ana yönetici şifresi buradan değiştirilemez.' });
+    }
+
+    const userIndex = db.users.findIndex(u => u.id === req.user.id);
+    if (userIndex === -1) return res.status(404).json({ success: false, message: 'Kullanıcı bulunamadı.' });
+
+    const user = db.users[userIndex];
+    const validPass = await bcrypt.compare(oldPassword, user.password);
+    if (!validPass) return res.status(400).json({ success: false, message: 'Eski şifre hatalı.' });
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+
+    writeDb(db);
+    res.json({ success: true, message: 'Şifre güncellendi.' });
+});
+
+// 4. GENERIC PUBLIC READ
 app.get('/api/content/:type', (req, res) => {
-    const { type } = req.params;
     const db = readDb();
-    res.json(db[type] || []);
+    res.json(db[req.params.type] || []);
 });
 
-app.post('/api/content/:type', (req, res) => {
-    const { type } = req.params;
-    // In real app, verify Admin Token here
-    const db = readDb();
-    if (!db[type]) db[type] = [];
-
-    const newItem = {
-        id: Date.now(),
-        ...req.body
-    };
-
-    db[type].push(newItem);
-    writeDb(db);
-    res.json({ success: true, item: newItem });
-});
-
-app.delete('/api/content/:type/:id', (req, res) => {
-    const { type, id } = req.params;
-    const db = readDb();
-
-    if (!db[type]) return res.status(404).json({ success: false });
-
-    // Filter out the item (handling string/number id mismatch possibilities)
-    const initialLength = db[type].length;
-    db[type] = db[type].filter(item => item.id != id);
-
-    if (db[type].length < initialLength) {
-        writeDb(db);
-        res.json({ success: true });
-    } else {
-        res.status(404).json({ success: false, message: 'Item not found' });
-    }
-});
-
-// --- SPECIAL TYPES ---
-
-// Get Announcements (Aliases to generic content 'announcements')
 app.get('/api/announcements', (req, res) => {
     const db = readDb();
     res.json(db.announcements || []);
 });
 
-app.post('/api/announcements', (req, res) => {
-    const { announcements } = req.body;
-    if (!Array.isArray(announcements)) {
-        return res.status(400).json({ success: false, message: 'Geçersiz format.' });
-    }
-
-    const db = readDb();
-    db.announcements = announcements;
-    writeDb(db);
-    res.json({ success: true, message: 'Duyurular güncellendi.' });
-});
-
-// Market API (Complex Logic)
 app.get('/api/market', (req, res) => {
     const db = readDb();
-    // Return all items, frontend filters visible ones based on role if needed, 
-    // but usually public sees only approved.
-    // For simplicity, we send all, frontend filters.
+    // In a real scenario, filter 'approved' for public here.
+    // For now, we send all and let frontend decide UI, but usually backend shd filter.
     res.json(db.market || []);
 });
 
-app.post('/api/market', (req, res) => {
-    const { role } = req.body; // Expecting role to be sent in body for now
+// 5. PROTECTED WRITES (Admin Only)
+app.post('/api/announcements', authenticateToken, requireAdmin, (req, res) => {
+    const db = readDb();
+    db.announcements = req.body.announcements;
+    writeDb(db);
+    res.json({ success: true });
+});
+
+app.post('/api/content/:type', authenticateToken, requireAdmin, (req, res) => {
+    const { type } = req.params;
+    const db = readDb();
+    if (!db[type]) db[type] = [];
+
+    const newItem = { id: Date.now(), ...req.body };
+    db[type].push(newItem);
+    writeDb(db);
+    res.json({ success: true, item: newItem });
+});
+
+app.delete('/api/content/:type/:id', authenticateToken, (req, res) => {
+    // Both Admin and Owner (for market) can delete.
+    const { type, id } = req.params;
+    const db = readDb();
+
+    if (!db[type]) return res.status(404).json({ success: false });
+
+    // Find item
+    const item = db[type].find(i => i.id == id);
+    if (!item) return res.status(404).json({ success: false, message: 'Bulunamadı.' });
+
+    // Authz Logic
+    if (req.user.role !== 'admin') {
+        // If not admin, must be owner AND it must be a market item (others are admin-only content)
+        if (type !== 'market') return res.status(403).json({ success: false });
+        if (item.owner !== req.user.contact) return res.status(403).json({ success: false });
+    }
+
+    db[type] = db[type].filter(i => i.id != id);
+    writeDb(db);
+    res.json({ success: true });
+});
+
+// 6. MARKET (Public Post, Admin Approve)
+app.post('/api/market', authenticateToken, (req, res) => {
     const db = readDb();
     if (!db.market) db.market = [];
 
-    const status = (role === 'admin') ? 'approved' : 'pending';
+    const isAutoApprove = req.user.role === 'admin';
+    const status = isAutoApprove ? 'approved' : 'pending';
 
     const newItem = {
         id: Date.now(),
         ...req.body,
-        status: status,
+        status,
+        owner: req.user.contact, // Enforce server-side owner from token
         image: req.body.image || 'images/default_market.jpg'
     };
 
-    // Remove role from saved object
+    // Security: Prevent user from sending manipulated 'status' or 'role'
     delete newItem.role;
 
     db.market.push(newItem);
     writeDb(db);
 
-    const msg = (status === 'approved')
-        ? 'İlanınız yayınlandı.'
-        : 'İlan talebiniz alındı. Yönetici onayından sonra yayınlanacaktır.';
-
-    res.json({ success: true, item: newItem, message: msg });
+    res.json({
+        success: true,
+        message: isAutoApprove ? 'İlan yayınlandı.' : 'Onay bekleniyor.'
+    });
 });
 
-app.post('/api/market/approve/:id', (req, res) => {
-    const { id } = req.params;
+app.post('/api/market/approve/:id', authenticateToken, requireAdmin, (req, res) => {
     const db = readDb();
-    const item = db.market?.find(i => i.id == id);
+    const item = db.market?.find(i => i.id == req.params.id);
+    if (!item) return res.status(404).json({ success: false });
 
-    if (item) {
-        item.status = 'approved';
-        writeDb(db);
-        res.json({ success: true });
-    } else {
-        res.status(404).json({ success: false });
-    }
-});
-
-app.delete('/api/market/:id', (req, res) => {
-    const { id } = req.params;
-    const db = readDb();
-    const initialLength = db.market?.length || 0;
-
-    if (db.market) {
-        db.market = db.market.filter(i => i.id != id);
-        if (db.market.length < initialLength) {
-            writeDb(db);
-            return res.json({ success: true });
-        }
-    }
-    res.status(404).json({ success: false });
-});
-
-// Support Ticket
-app.post('/api/support', (req, res) => {
-    const db = readDb();
-    if (!db.supportTickets) db.supportTickets = [];
-
-    const ticket = {
-        id: `GDK-2025-${Math.floor(Math.random() * 1000)}`,
-        date: new Date().toISOString(),
-        ...req.body
-    };
-
-    db.supportTickets.push(ticket);
-    writeDb(db);
-
-    console.log("New Support Ticket:", ticket.id);
-    res.json({ success: true, ticketBox: ticket.id });
-});
-
-// Settings (Weather, etc.)
-app.post('/api/settings', (req, res) => {
-    const db = readDb();
-    db.settings = { ...db.settings, ...req.body };
+    item.status = 'approved';
     writeDb(db);
     res.json({ success: true });
 });
 
-// Start Server
-// --- SUPPORT TICKET ENDPOINTS ---
-
-// GET Tickets (Admin sees all, User sees own)
-app.get('/api/tickets', (req, res) => {
-    const userRole = req.query.role;
-    const userId = req.query.userId;
+// 7. SUPPORT TICKETS
+// 7. SUPPORT TICKETS REST API
+app.get('/api/tickets', authenticateToken, (req, res) => {
     const db = readDb();
+    const { userId, role } = req.query;
 
-    if (userRole === 'admin') {
-        res.json(db.tickets || []);
-    } else {
-        const userTickets = (db.tickets || []).filter(t => t.userId === userId);
-        res.json(userTickets);
+    if (!db.tickets) db.tickets = [];
+
+    // Admin sees all, User sees own
+    if (role === 'admin' && req.user.role === 'admin') {
+        return res.json(db.tickets);
     }
+
+    if (userId) {
+        // Strict check: you can only see tickets if you OWN them or are ADMIN
+        if (req.user.contact !== userId && req.user.role !== 'admin') {
+            return res.status(403).json({ success: false, message: 'Yetkisiz erişim.' });
+        }
+        const userTickets = db.tickets.filter(t => t.userId === userId);
+        return res.json(userTickets);
+    }
+
+    return res.json([]);
 });
 
-// POST New Ticket
-app.post('/api/tickets', (req, res) => {
+app.post('/api/tickets', authenticateToken, (req, res) => {
     const db = readDb();
+    if (!db.tickets) db.tickets = [];
+
     const newTicket = {
         id: Date.now().toString(),
-        status: 'pending',
+        status: 'pending', // pending | resolved
         date: new Date().toLocaleDateString('tr-TR'),
-        ...req.body
+        ...req.body,
+        adminResponse: null
     };
 
-    if (!db.tickets) db.tickets = [];
     db.tickets.push(newTicket);
     writeDb(db);
-    res.json({ success: true, message: 'Talep oluşturuldu' });
+
+    res.json({ success: true, ticket: newTicket });
 });
 
-// PUT Respond to Ticket (Admin)
-app.put('/api/tickets/:id/respond', (req, res) => {
-    console.log(` responding to ticket ${req.params.id} with`, req.body);
+app.put('/api/tickets/:id/respond', authenticateToken, requireAdmin, (req, res) => {
     const db = readDb();
-    if (!db.tickets) db.tickets = [];
+    if (!db.tickets) return res.status(404).json({ success: false });
 
-    const index = db.tickets.findIndex(t => t.id == req.params.id); // Loose equality
-    if (index !== -1) {
-        db.tickets[index].status = 'resolved';
-        db.tickets[index].adminResponse = req.body.response;
-        writeDb(db);
-        console.log("Response written to DB");
-        res.json({ success: true, message: 'Yanıt gönderildi' });
-    } else {
-        console.log("Ticket not found:", req.params.id);
-        res.status(404).json({ success: false, message: 'Ticket bulunamadı' });
-    }
+    const ticket = db.tickets.find(t => t.id === req.params.id);
+    if (!ticket) return res.status(404).json({ success: false, message: 'Talep bulunamadı.' });
+
+    ticket.adminResponse = req.body.response;
+    ticket.status = 'resolved';
+
+    writeDb(db);
+    res.json({ success: true });
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}`);
-    console.log(`API Ready.`);
+    console.log(`Server running on http://localhost:${PORT}`);
+    // Create DB if not exists
+    if (!fs.existsSync(DB_FILE)) {
+        fs.writeFileSync(DB_FILE, JSON.stringify({ users: [], market: [], announcements: [] }));
+    }
 });
