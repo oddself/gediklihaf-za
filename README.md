@@ -1,134 +1,214 @@
-# 🏞️ Gedikli Belleği – Köy Dijital Arşivi
+🏞️ Gedikli Belleği – Köy Dijital Arşivi
 
-**Gedikli Belleği**, köy kültürünü, tarihini, fotoğraf arşivini, nüfus kayıtlarını ve yerel pazar ilanlarını tek bir dijital platformda toplamak amacıyla oluşturulmuş modern bir web uygulamasıdır.  
-Bu proje, köy yaşamını dijital ortama taşımayı ve geleceğe kalıcı bir miras bırakmayı hedefler.
+Gedikli Belleği, köy kültürünü, aile kayıtlarını, fotoğraf arşivini, tarihî belgeleri ve yerel pazar ilanlarını bir araya getiren modern bir dijital arşiv platformudur.
+Amaç, köyün geçmişini korumak, bugünü kayıt altına almak ve gelecek nesillere kalıcı bir miras bırakmaktır.
 
----
+🚀 Proje Amacı
 
-## 🚀 Proje Amacı
+Köye ait tarihî belgeleri, fotoğraf arşivlerini ve soy ağacı kayıtlarını dijitalleştirmek
 
-- Köyün **tarihî belgelerini**, **fotoğraflarını** ve **kültürel kayıtlarını** tek bir merkezde toplamak  
-- Köylüler arasında bilgi paylaşımını artırmak  
-- Köy pazarı aracılığıyla yerel alışverişi kolaylaştırmak  
-- Modern bir arşiv yapısı oluşturarak **kültürel mirası korumak**
+Köylüler arasında bilgi erişimini ve paylaşımını kolaylaştırmak
 
----
+Köylülerin ürünlerini sergileyebildiği dijital köy pazarı oluşturmak
 
-## 👥 Kullanıcı Rolleri
+Kültürel mirası modern bir yapıda uzun yıllar korumak
 
-Uygulamada üç farklı kullanıcı tipi bulunmaktadır:
+👥 Kullanıcı Rolleri
 
-### 🔹 **Ziyaretçi**
-- Kısıtlı erişime sahiptir  
-- Sadece: **Ana Panel**, **Köy Pazarı**, **Fotoğraf Kütüphanesi**, **İletişim & Destek** bölümlerini görüntüleyebilir  
-- Üyelere özel alanlara erişmeye çalışınca sistem uyarı verir
+Uygulama üç farklı kullanıcı rolünü destekler:
 
-### 🔹 **Normal Kullanıcı**
-- Üyelik ile giriş yapılır  
-- Köy Pazarı kısmında **ilan talebi oluşturabilir**  
-- Üyelere özel içeriklerin bir kısmını görüntüleyebilir
+🔹 Ziyaretçi
 
-### 🔹 **Admin**
-- Sistem üzerinde tam yetkilidir  
-- Duyuru ekleme/silme, içerik düzenleme, pazar ilanlarını yönetme  
-- Fotoğraf & belge arşivini yönetme  
-- Kullanıcıların oluşturduğu talepleri onaylama  
-- Yönetici girişi özel doğrulama üzerinden yapılır
+Üyelik gerektirmez
 
----
+Görebileceği bölümler:
+✔️ Ana Panel
+✔️ Köy Pazarı
+✔️ Fotoğraf Kütüphanesi
+✔️ Destek Talebi
 
-## 📰 Açılış Duyuru Sistemi
+Üyelere özel bölümlere erişimde uyarı alır
 
-Uygulamaya giriş yapan kullanıcıya ilk olarak bir **Önemli Duyurular** penceresi gösterilir.
+🔹 Normal Kullanıcı
 
-- Admin tarafından güncellenebilir  
-- Kullanıcı duyuruyu kapattıktan sonra **aynı oturumda tekrar gösterilmez**  
-- Yeni duyuru geldiğinde tekrar gösterilecek şekilde geliştirilmeye açıktır
+Üyelik oluşturur ve giriş yapar
 
-Bu özellik, köy halkının önemli bilgilere hızla ulaşmasını sağlar.
+Köy Pazarı’nda ilan talebi oluşturabilir
 
----
+Üyelere özel içeriklerin bir kısmını görüntüleyebilir
 
-## 🧭 Özellikler
+Destek/istek bileti gönderebilir
 
-### 📌 **Ana Panel**
-- Köyün tanıtımı  
-- Arşiv istatistikleri (belge sayısı, fotoğraf sayısı vb.)
+🔹 Admin
 
-### 📄 **Tarihî Belge Arşivi**
-- 150’den fazla kayıt  
-- Belge taramaları ve açıklamaları
+Sistem üzerinde tam yetkiye sahiptir
 
-### 🖼️ **Fotoğraf Kütüphanesi**
-- 1200+ adet köy fotoğrafı  
-- Albüm yapısı ile rahat gezinme
+Duyuru ekleme / silme
 
-### 🏷️ **Köy Pazarı**
-- Normal kullanıcıların ilan talebi oluşturduğu sistem  
-- Admin onayı sonrası ilanlar yayınlanır  
-- Kategorize edilmiş ürün yapısı
+Pazar ilanlarını onaylama / reddetme
 
-### 👨‍👩‍👧 **Soy Ağacı & Nüfus Kayıtları**
-- Köyün aile yapısının dijital kaydı  
-- Üyelere özel erişim
+Fotoğraf ve belge arşivini yönetme
 
-### 🕊️ **Vefat Edenler Bölümü**
-- Anı kayıtları  
-- Tarihsel bilgi arşivi
+Soy ağacı ve vefat edenler kayıtlarını düzenleme
 
----
+Kullanıcı taleplerini yönetme
 
-## 🛠️ Teknik Mimari
+Yönetici girişi özel kimlik doğrulama ile yapılır.
 
-Bu proje, **AI destekli geliştirme yaklaşımı** ile oluşturulmuştur.  
-Kod üretimi ve iyileştirmeler için yapay zeka araçları (IDE + AI modelleri) kullanılmış, mimari kararlar, tasarım prensipleri ve sistem akışları manuel olarak oluşturulmuştur.
+📰 Açılış Duyuru Sistemi
 
-### Kullanılan Teknolojiler:
-- HTML / CSS / JavaScript
-- JSON tabanlı veri yönetimi (geliştirme aşaması)
-- AI destekli kod üretimi (prompt engineering)
-- Responsive modern UI tasarımı
+Platforma giriş yapan kullanıcıya özel bir duyuru penceresi gösterilir.
 
----
+Admin tarafından güncellenebilir
 
-## 🤖 AI Destekli Geliştirme Açıklaması
+Oturum süresince yalnızca bir kez görünür
 
-Bu proje bir “kodu AI yazsın” denemesi değildir.  
-Gerçek süreç şunları içerir:
+Yeni duyuru geldiğinde tekrar görüntülenebilir
 
-- Tüm sayfa akışları, kullanıcı rolleri, erişim yetkileri **manuel olarak tasarlandı**  
-- Yapay zekâ sadece kod üretiminde **bir araç** olarak kullanıldı  
-- Üretilen kodlar test edildi, hatalar tespit edilip **AI yönlendirilerek düzeltildi**  
-- Tasarım kararları, UX yönlendirmeleri ve proje mimarisi bizzat oluşturuldu
+Köy halkının önemli bilgiye hızlı şekilde ulaşmasını sağlar
 
-Bu proje, modern yazılım geliştirmede **Prompt Engineering + Product Design + AI Assisted Development** modelinin bir örneğidir.
+🧭 Ana Özellikler
+📌 Ana Panel
 
----
+Köy tanıtımı
 
-## 📱 Gelecek Planları
+Arşiv istatistikleri
 
-- Mobil uygulama (React Native / Flutter veya PWA)
-- Gelişmiş admin paneli
-- Gerçek kullanıcı doğrulaması (email & şifre sistemi)
-- Veritabanı geçişi (SQLite / PostgreSQL)
-- API tabanlı mimariye dönüşüm
-- Gerçek hosting + domain yayını (opsiyonel)
+Güncel duyurular
 
----
+📄 Belge Arşivi
 
-## 🧑‍💻 Proje Durumu
+Tarihî dokümanların dijital kopyaları
 
-Bu proje hâlen **geliştirme aşamasındadır**.  
-Öncelik: tüm fonksiyonların prototip seviyesinde tamamlanması ve kullanıcı testlerinin yapılmasıdır.
+Açıklamalar ve kategori sistemi
 
----
+Arşivlenmiş resmî kayıtlar
 
-## 📩 İletişim
+🖼️ Fotoğraf Kütüphanesi
 
-Proje sahibi: **Bayram Garip**  
+1200+ köy fotoğrafı
+
+Albüm mantığıyla kategorize edilmiş yapı
+
+Mobil uyumlu görüntüleme
+
+🏷️ Köy Pazarı
+
+Normal kullanıcı ilan talebi oluşturur
+
+Admin onayladıktan sonra ilan yayınlanır
+
+Ürün detayları + görsel destek
+
+Ziyaretçilere açık listeleme
+
+👨‍👩‍👧 Soy Ağacı
+
+Ailelerin dijital şeması
+
+Kök aile bilgileri
+
+Üyelere özel erişim
+
+🕊️ Vefat Edenler Bölümü
+
+Köyün tarihsel anı defteri
+
+Fotoğraflı veya açıklamalı kayıtlar
+
+🛠️ Teknik Mimari
+
+Bu proje AI destekli geliştirme modeli ile hazırlanmıştır.
+Ancak uygulamanın tasarımı, mimarisi ve iş akışları tamamen manuel olarak oluşturulmuş, yapay zekâ yalnızca araç olarak kullanılmıştır.
+
+Kullanılan Teknolojiler
+
+Frontend: HTML, CSS, JavaScript
+
+Backend: Node.js + Express
+
+Veri Saklama: JSON tabanlı lokal veri yönetimi
+
+Güvenlik: JWT, bcrypt, Helmet, Rate Limit
+
+AI-Assisted Development: Prompt Engineering ile kod üretimi ve refaktör
+
+🤖 AI Destekli Geliştirme Açıklaması
+
+Bu proje “kodu AI yazsın” projesi değildir.
+Aşağıdaki süreç uygulanmıştır:
+
+Tüm ekran akışları, kullanıcı rolleri, veri yapıları manuel tasarlandı
+
+AI sadece kod yazımı hızlandırmak ve hataları gidermek için kullanıldı
+
+Üretilen kod → test edildi → gerekli yerlerde manuel olarak düzeltildi
+
+Tasarım kararları ve mimari yapı tamamen el ile oluşturuldu
+
+Bu proje, modern yazılım geliştirme sürecinde:
+
+Prompt Engineering + Product Design + Human Supervision + AI Assisted Coding
+
+yaklaşımının gerçek bir örneğidir.
+
+📱 Gelecek Planları
+
+Planlanan geliştirmeler:
+
+🌐 Gerçek bir veritabanına geçiş (SQLite / PostgreSQL)
+
+📱 Mobil uygulama (Flutter / React Native / PWA)
+
+🔐 Admin paneline 2FA (İki Faktörlü Kimlik Doğrulama)
+
+🗂️ API tabanlı mikro servis mimarisine geçiş
+
+☁️ Hosting + Domain yayımı
+
+🧠 Otomatik içerik sınıflandırma (AI destekli)
+
+🧑‍💻 Proje Durumu
+
+Bu proje hâlen aktif geliştirme aşamasındadır.
+Geliştirme boyunca:
+
+Yeni özellikler eklenecek
+
+Performans ve güvenlik testleri yapılacak
+
+Kullanıcı geri bildirimleri doğrultusunda geliştirme devam edecek
+
+🔧 Kurulum & Çalıştırma
+1. Depoyu Klonla
+git clone https://github.com/oddself/gediklihaf-za.git
+cd gediklihaf-za
+
+2. Bağımlılıkları Kur
+npm install
+
+3. Veritabanı dosyasını oluştur
+cp db.example.json db.json
+
+
+(Windows PowerShell)
+
+Copy-Item db.example.json db.json
+
+4. .env dosyası oluştur
+JWT_SECRET=buraya_rastgele_uzun_bir_secret
+ADMIN_PASSWORD=Admin123!
+PORT=3000
+
+5. Gerekirse admin hesabı oluştur
+node fix_admin.js
+
+6. Sunucuyu başlat
+npm start
+
+📩 İletişim
+
+Proje Sahibi: Bayram Garip
 GitHub: https://github.com/oddself
 
-Eğer projeyle ilgili öneriniz varsa issue açabilirsiniz.
-
----
-
+Issues bölümünden geri bildirim gönderebilirsiniz.
